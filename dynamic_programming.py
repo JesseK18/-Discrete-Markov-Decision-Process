@@ -20,16 +20,39 @@ class Dynamic_Programming:
         ''' Executes value iteration on env. 
         gamma is the discount factor of the MDP
         theta is the acceptance threshold for convergence '''
-        #git test 123
+        
         print("Starting Value Iteration (VI)")
         # initialize value table
         V_s = np.zeros(env.n_states)
-    
         
-    
+
+       #looping until break for delta in range 
+        while True:
+            delta = 0
+            #loop over all states to fill in all V_s
+            for s in env.states:
+                v = V_s[s]
+                #instantiate the action vector
+                action_values = np.zeros(env.n_actions)
+                #loop over the actions to fill in the estimated values
+                for a_idx, a in enumerate(env.actions):
+                    s_prime, reward = env.transition_function(s, a)
+                    action_values[a_idx] = reward + gamma * V_s[s_prime]
+
+                #use best value of corresponding actions to update
+                V_s[s] = np.max(action_values)
+
+                #taking max of delta and value to let delta convergence
+                delta = max(delta, np.abs(v - V_s[s]))
+
+            #break condition for when delta interval is smaller than theta, 
+            if delta < theta:
+                break
+
         self.V_s = V_s
         print(self.V_s)
-
+        print("Value Iteration has converged.")
+    
         return
 
     def Q_value_iteration(self,env,gamma = 1.0, theta=0.001):
