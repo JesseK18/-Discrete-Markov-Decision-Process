@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Dynamic Programming 
@@ -20,15 +20,16 @@ class Dynamic_Programming:
         ''' Executes value iteration on env. 
         gamma is the discount factor of the MDP
         theta is the acceptance threshold for convergence '''
-
+        #git test 123
         print("Starting Value Iteration (VI)")
         # initialize value table
         V_s = np.zeros(env.n_states)
     
-        ## IMPLEMENT YOUR VALUE ITERATION ALGORITHM HERE
-        print("You still need to implement value iteration!")
+        
     
         self.V_s = V_s
+        print(self.V_s)
+
         return
 
     def Q_value_iteration(self,env,gamma = 1.0, theta=0.001):
