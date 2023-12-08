@@ -22,37 +22,32 @@ class Dynamic_Programming:
         theta is the acceptance threshold for convergence '''
         
         print("Starting Value Iteration (VI)")
+         
         # initialize value table
         V_s = np.zeros(env.n_states)
-        
+        self.V_s = np.zeros(env.n_states)
 
-       #looping until break for delta in range 
-        while True:
-            delta = 0
-            #loop over all states to fill in all V_s
+        # Initialize max difference (delta)
+        max_diff = 1
+
+        #Check for convergence
+
+        while max_diff > theta:
+            max_diff = 0
             for s in env.states:
-                v = V_s[s]
-                #instantiate the action vector
-                action_values = np.zeros(env.n_actions)
-                #loop over the actions to fill in the estimated values
-                for a_idx, a in enumerate(env.actions):
-                    s_prime, reward = env.transition_function(s, a)
-                    action_values[a_idx] = reward + gamma * V_s[s_prime]
+                max_val = 0
+                x = V_s[s]
 
-                #use best value of corresponding actions to update
-                V_s[s] = np.max(action_values)
+                for a in env.actions:
+                    # Compute state value
+                    s_next, reward = env.transition_function(s, a)
+                    reward += gamma * V_s[s_next]
+                    max_val = max(max_val, reward)
 
-                #taking max of delta and value to let delta convergence
-                delta = max(delta, np.abs(v - V_s[s]))
+                V_s[s] = max_val
+                max_diff = max(max_diff, abs(x - V_s[s]))
 
-            #break condition for when delta interval is smaller than theta, 
-            if delta < theta:
-                break
-
-        self.V_s = V_s
-        print(self.V_s)
-        print("Value Iteration has converged.")
-    
+            self.V_s = V_s
         return
 
     def Q_value_iteration(self,env,gamma = 1.0, theta=0.001):
@@ -64,10 +59,31 @@ class Dynamic_Programming:
         # initialize state-action value table
         Q_sa = np.zeros([env.n_states,env.n_actions])
 
-        ## IMPLEMENT YOUR Q-VALUE ITERATION ALGORITHM HERE
-        print("You still need to implement Q-value iteration!")
+        #Initialize action mapping to map integer actions to string actions so we can just call 'a' further in this function
+        action_mapping = {
+            0: "up",
+            1: "down",
+            2: "left",
+            3: "right",
+        }
 
-        self.Q_sa = Q_sa
+        # Run loop until convergence (delta is smaller then theta)
+        while True:
+            max_diff = 0
+            for s in range(env.n_states):
+                max_val = 0
+                for a in range(env.n_actions):
+                    next_state, reward = env.transition_function(s, action_mapping[a])
+                    q = reward + gamma * Q_sa[next_state][a]
+                    max_val = max(max_val, q)
+                # Update max difference with maximum value between old and new Q-values
+                max_diff = np.maximum(max_diff, np.abs(Q_sa[s] - max_val))
+                Q_sa[s] = max_val
+            # Check for convergence
+            if max_diff.all() < theta:
+                break
+            self.Q_sa = Q_sa
+
         return
                 
     def execute_policy(self,env,table='V'):
