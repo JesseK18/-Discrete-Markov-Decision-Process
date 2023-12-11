@@ -48,6 +48,7 @@ class Dynamic_Programming:
                 max_diff = max(max_diff, abs(x - V_s[s]))
 
             self.V_s = V_s
+        print(self.V_s)
         return
 
     def Q_value_iteration(self,env,gamma = 1.0, theta=0.001):
@@ -96,17 +97,28 @@ class Dynamic_Programming:
             available_actions = env.actions
             # Compute action values
             if table == 'V' and self.V_s is not None:
-                ## IMPLEMENT ACTION VALUE ESTIMATION FROM self.V_s HERE !!!
-                print("You still need to implement greedy action selection from the value table self.V_s!")
-                greedy_action = None # replace this!
+                for a in available_actions:
+                    s_next, reward = env.transition_function(current_state, a)
+                    if (self.V_s[current_state] == self.V_s[s_next] + reward):
+                        greedy_action = a
+                        break
 
                 
             
             elif table == 'Q' and self.Q_sa is not None:
-                ## IMPLEMENT ACTION VALUE ESTIMATION FROM self.Q_sa here !!!
-                
-                print("You still need to implement greedy action selection from the state-action value table self.Q_sa!")
-                greedy_action = None # replace this!
+                #Action mapping as well, but then reversed in comparison to Q_value_iteration
+                action_mapping = {
+                    "up": 0,
+                    "down": 1,
+                    "left": 2,
+                    "right": 3,
+                }
+                #This works the same as if table == 'V', but then the part 'action_mapping[a]' is added so it works for Q_sa
+                for a in available_actions:
+                    next_state, reward = env.transition_function(current_state,a)
+                    if(self.Q_sa[current_state][action_mapping[a]] == self.Q_sa[next_state][action_mapping[a]] + reward):
+                        greedy_action = a
+                        break
                 
                 
             else:
